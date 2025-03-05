@@ -16,8 +16,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handlePostNotFoundException(PostNotFoundException ex) {
-        log.error("Post not found: {}", ex.getMessage());
-        return createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+        String message = "Post not found with reference key: " + ex.getMessage();
+        log.error(message);
+        return createErrorResponse(HttpStatus.NOT_FOUND, message);
     }
 
     @ExceptionHandler(Exception.class)
