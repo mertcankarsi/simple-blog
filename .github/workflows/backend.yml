@@ -27,3 +27,9 @@ jobs:
       
     - name: Run Tests
       run: mvn -B test --file backend/pom.xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: backend/target/site/jacoco/jacoco.xml
+        fail_ci_if_error: true
