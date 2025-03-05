@@ -28,8 +28,9 @@ jobs:
     - name: Run Tests
       run: mvn -B test --file backend/pom.xml
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
       with:
-        file: backend/target/site/jacoco/jacoco.xml
-        fail_ci_if_error: true
+        name: coverage-report
+        path: backend/target/site/jacoco/
+        retention-days: 14
