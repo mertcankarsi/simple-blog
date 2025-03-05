@@ -1,0 +1,27 @@
+# Compiled class files
+*.class
+
+# Maven specific
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Java specific
+hs_err_pid*
+replay_pid*
+
+# Application specific
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+# Test specific
+test-output/
+reports/
