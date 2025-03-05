@@ -1,0 +1,113 @@
+package com.mertcankarsi.simpleblog.mapper;
+
+import com.mertcankarsi.simpleblog.dto.PostDto;
+import com.mertcankarsi.simpleblog.entity.Post;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class PostMapperTest {
+
+    private PostMapper postMapper;
+    private Post post;
+    private PostDto postDto;
+    private String referenceKey;
+
+    @BeforeEach
+    void setUp() {
+        postMapper = Mappers.getMapper(PostMapper.class);
+        referenceKey = UUID.randomUUID().toString();
+
+        post = new Post();
+        post.setReferenceKey(referenceKey);
+        post.setTitle("Test Title");
+        post.setContent("Test Content");
+        post.setCreatedAt(LocalDateTime.now());
+        post.setUpdatedAt(LocalDateTime.now());
+
+        postDto = new PostDto();
+        postDto.setReferenceKey(referenceKey);
+        postDto.setTitle("Test Title");
+        postDto.setContent("Test Content");
+        postDto.setCreatedAt(LocalDateTime.now());
+        postDto.setUpdatedAt(LocalDateTime.now());
+    }
+
+    @Test
+    void toEntity_ShouldMapDtoToEntity() {
+        // Act
+        Post result = postMapper.toEntity(postDto);
+
+        // Assert
+        assertNotNull(result);
+        assertNull(result.getReferenceKey());
+        assertNull(result.getCreatedAt());
+        assertNull(result.getUpdatedAt());
+        assertEquals(postDto.getTitle(), result.getTitle());
+        assertEquals(postDto.getContent(), result.getContent());
+    }
+
+    @Test
+    void toDto_ShouldMapEntityToDto() {
+        // Act
+        PostDto result = postMapper.toDto(post);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(post.getReferenceKey(), result.getReferenceKey());
+        assertEquals(post.getTitle(), result.getTitle());
+        assertEquals(post.getContent(), result.getContent());
+        assertEquals(post.getCreatedAt(), result.getCreatedAt());
+        assertEquals(post.getUpdatedAt(), result.getUpdatedAt());
+    }
+
+    @Test
+    void toDtoList_ShouldMapEntityListToDtoList() {
+        // Arrange
+        List<Post> posts = Arrays.asList(post);
+
+        // Act
+        List<PostDto> result = postMapper.toDtoList(posts);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(post.getReferenceKey(), result.get(0).getReferenceKey());
+        assertEquals(post.getTitle(), result.get(0).getTitle());
+        assertEquals(post.getContent(), result.get(0).getContent());
+        assertEquals(post.getCreatedAt(), result.get(0).getCreatedAt());
+        assertEquals(post.getUpdatedAt(), result.get(0).getUpdatedAt());
+    }
+
+    @Test
+    void updateEntity_ShouldUpdateEntityWithDtoValues() {
+        // Arrange
+        Post existingPost = new Post();
+        existingPost.setReferenceKey("old-key");
+        existingPost.setTitle("Old Title");
+        existingPost.setContent("Old Content");
+        existingPost.setCreatedAt(LocalDateTime.now().minusDays(1));
+        existingPost.setUpdatedAt(LocalDateTime.now().minusDays(1));
+
+        PostDto updateDto = new PostDto();
+        updateDto.setTitle("New Title");
+        updateDto.setContent("New Content");
+
+        // Act
+        postMapper.updateEntity(existingPost, updateDto);
+
+        // Assert
+        assertEquals("old-key", existingPost.getReferenceKey());
+        assertNotNull(existingPost.getCreatedAt());
+        assertNotNull(existingPost.getUpdatedAt());
+        assertEquals(updateDto.getTitle(), existingPost.getTitle());
+        assertEquals(updateDto.getContent(), existingPost.getContent());
+    }
+} 
