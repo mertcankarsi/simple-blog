@@ -6,16 +6,15 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class SimpleBlogApplicationTests {
+class SimpleBlogApplicationTest {
 
     @Test
     void contextLoads() {
-        // Spring context'in başarıyla yüklendiğini test eder
+        // This test is intentionally left blank as it's a placeholder
     }
 
     @Test
     void applicationStarts() {
-        // Uygulamanın başarıyla başlatıldığını test eder
         SimpleBlogApplication.main(new String[]{});
     }
-} 
+}

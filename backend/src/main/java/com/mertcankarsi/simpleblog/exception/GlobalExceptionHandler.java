@@ -3,12 +3,14 @@ package com.mertcankarsi.simpleblog.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -16,8 +18,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handlePostNotFoundException(PostNotFoundException ex) {
-        log.error("Post not found: {}", ex.getMessage());
-        return createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+        String message = "Post not found with reference key: " + ex.getReferenceKey();
+        log.error(message);
+        return createErrorResponse(HttpStatus.NOT_FOUND, message);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        log.error("Validation failed: {}", message);
+        return createErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 
     @ExceptionHandler(Exception.class)
@@ -32,7 +44,7 @@ public class GlobalExceptionHandler {
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
         body.put("message", message);
-        
+
         return new ResponseEntity<>(body, status);
     }
 } 
