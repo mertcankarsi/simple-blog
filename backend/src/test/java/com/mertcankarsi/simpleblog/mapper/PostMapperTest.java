@@ -110,4 +110,46 @@ class PostMapperTest {
         assertEquals(updateDto.getTitle(), existingPost.getTitle());
         assertEquals(updateDto.getContent(), existingPost.getContent());
     }
+
+    @Test
+    void toEntity_WhenDtoIsNull_ShouldReturnNull() {
+        // Act
+        Post result = postMapper.toEntity(null);
+
+        // Assert
+        assertNull(result);
+    }
+
+    @Test
+    void toDto_WhenEntityIsNull_ShouldReturnNull() {
+        // Act
+        PostDto result = postMapper.toDto(null);
+
+        // Assert
+        assertNull(result);
+    }
+
+    @Test
+    void toDtoList_WhenEntityListIsNull_ShouldReturnNull() {
+        // Act
+        List<PostDto> result = postMapper.toDtoList(null);
+
+        // Assert
+        assertNull(result);
+    }
+
+    @Test
+    void updateEntity_WhenDtoIsNull_ShouldNotUpdateEntity() {
+        // Arrange
+        Post existingPost = new Post();
+        existingPost.setTitle("Old Title");
+        existingPost.setContent("Old Content");
+
+        // Act
+        postMapper.updateEntity(existingPost, null);
+
+        // Assert
+        assertEquals("Old Title", existingPost.getTitle());
+        assertEquals("Old Content", existingPost.getContent());
+    }
 } 

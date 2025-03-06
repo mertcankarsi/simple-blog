@@ -4,18 +4,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest
 @ActiveProfiles("test")
 class SimpleBlogApplicationTests {
 
     @Test
     void contextLoads() {
-        // Spring context'in başarıyla yüklendiğini test eder
+        assertTrue(true);
     }
 
     @Test
     void applicationStarts() {
-        // Uygulamanın başarıyla başlatıldığını test eder
         SimpleBlogApplication.main(new String[]{});
     }
 } 
