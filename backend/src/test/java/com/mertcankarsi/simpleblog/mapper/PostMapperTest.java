@@ -4,7 +4,6 @@ import com.mertcankarsi.simpleblog.dto.PostDto;
 import com.mertcankarsi.simpleblog.entity.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -15,14 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PostMapperTest {
 
-    private PostMapper postMapper;
+    private final PostMapper postMapper = PostMapper.INSTANCE;
     private Post post;
     private PostDto postDto;
     private String referenceKey;
 
     @BeforeEach
     void setUp() {
-        postMapper = Mappers.getMapper(PostMapper.class);
         referenceKey = UUID.randomUUID().toString();
 
         post = new Post();

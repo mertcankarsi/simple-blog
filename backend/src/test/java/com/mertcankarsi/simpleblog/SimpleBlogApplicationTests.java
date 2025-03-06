@@ -4,15 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @SpringBootTest
 @ActiveProfiles("test")
 class SimpleBlogApplicationTests {
 
     @Test
     void contextLoads() {
-        assertTrue(true);
+        // This test is intentionally left blank as it's a placeholder
     }
 
     @Test
