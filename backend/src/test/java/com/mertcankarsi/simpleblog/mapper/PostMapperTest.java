@@ -4,6 +4,8 @@ import com.mertcankarsi.simpleblog.dto.PostDto;
 import com.mertcankarsi.simpleblog.entity.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -12,9 +14,12 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class PostMapperTest {
 
-    private final PostMapper postMapper = PostMapper.INSTANCE;
+    @Autowired
+    private PostMapper postMapper;
+
     private Post post;
     private PostDto postDto;
     private String referenceKey;

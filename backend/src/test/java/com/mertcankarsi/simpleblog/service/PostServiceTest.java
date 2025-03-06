@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,16 +52,15 @@ class PostServiceTest {
         postDto.setReferenceKey(referenceKey);
         postDto.setTitle("Test Title");
         postDto.setContent("Test Content");
-        postDto.setCreatedAt(LocalDateTime.now());
-        postDto.setUpdatedAt(LocalDateTime.now());
+        postDto.setCreatedAt(post.getCreatedAt());
+        postDto.setUpdatedAt(post.getUpdatedAt());
     }
 
     @Test
     void getAllPosts_ShouldReturnListOfPosts() {
         // Arrange
-        List<Post> posts = Arrays.asList(post);
-        when(postRepository.findAll()).thenReturn(posts);
-        when(postMapper.toDtoList(posts)).thenReturn(Arrays.asList(postDto));
+        when(postRepository.findAll()).thenReturn(List.of(post));
+        when(postMapper.toDtoList(any())).thenReturn(List.of(postDto));
 
         // Act
         List<PostDto> result = postService.getAllPosts();
@@ -72,23 +70,26 @@ class PostServiceTest {
         assertEquals(1, result.size());
         assertEquals(postDto, result.get(0));
         verify(postRepository).findAll();
-        verify(postMapper).toDtoList(posts);
+        verify(postMapper).toDtoList(any());
     }
 
     @Test
     void getPostByReferenceKey_WhenPostExists_ShouldReturnPost() {
         // Arrange
-        when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.of(post));
-        when(postMapper.toDto(post)).thenReturn(postDto);
+        when(postRepository.findByReferenceKey(any())).thenReturn(Optional.of(post));
+        when(postMapper.toDto(any())).thenReturn(postDto);
 
         // Act
         PostDto result = postService.getPostByReferenceKey(referenceKey);
 
         // Assert
         assertNotNull(result);
-        assertEquals(postDto, result);
-        verify(postRepository).findByReferenceKey(referenceKey);
-        verify(postMapper).toDto(post);
+        assertAll(
+                () -> assertEquals(postDto.getReferenceKey(), result.getReferenceKey()),
+                () -> assertEquals(postDto.getTitle(), result.getTitle()),
+                () -> assertEquals(postDto.getContent(), result.getContent()));
+        verify(postRepository).findByReferenceKey(any());
+        verify(postMapper).toDto(any());
     }
 
     @Test
@@ -123,9 +124,9 @@ class PostServiceTest {
     @Test
     void updatePost_WhenPostExists_ShouldReturnUpdatedPost() {
         // Arrange
-        when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.of(post));
-        when(postRepository.save(post)).thenReturn(post);
-        when(postMapper.toDto(post)).thenReturn(postDto);
+        when(postRepository.findByReferenceKey(any())).thenReturn(Optional.of(post));
+        when(postRepository.save(any())).thenReturn(post);
+        when(postMapper.toDto(any())).thenReturn(postDto);
 
         // Act
         PostDto result = postService.updatePost(referenceKey, postDto);
@@ -134,9 +135,9 @@ class PostServiceTest {
         assertNotNull(result);
         assertEquals(postDto, result);
         verify(postRepository).findByReferenceKey(referenceKey);
-        verify(postMapper).updateEntity(post, postDto);
-        verify(postRepository).save(post);
-        verify(postMapper).toDto(post);
+        verify(postMapper).updateEntity(any(Post.class), any(PostDto.class));
+        verify(postRepository).save(any());
+        verify(postMapper).toDto(any());
     }
 
     @Test

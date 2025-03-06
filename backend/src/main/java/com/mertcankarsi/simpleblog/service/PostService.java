@@ -15,8 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
 
-    private final PostRepository postRepository;
     private final PostMapper postMapper;
+    private final PostRepository postRepository;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllPosts() {
@@ -40,7 +40,7 @@ public class PostService {
     public PostDto updatePost(String referenceKey, PostDto postDto) {
         Post existingPost = postRepository.findByReferenceKey(referenceKey)
                 .orElseThrow(() -> new PostNotFoundException(referenceKey));
-        
+
         postMapper.updateEntity(existingPost, postDto);
         return postMapper.toDto(postRepository.save(existingPost));
     }
