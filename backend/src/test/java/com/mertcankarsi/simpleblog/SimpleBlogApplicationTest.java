@@ -17,4 +17,4 @@ class SimpleBlogApplicationTest {
     void applicationStarts() {
         SimpleBlogApplication.main(new String[]{});
     }
-} 
+}

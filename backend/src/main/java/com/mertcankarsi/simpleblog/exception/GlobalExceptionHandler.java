@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handlePostNotFoundException(PostNotFoundException ex) {
-        String message = "Post not found with reference key: " + ex.getMessage();
+        String message = "Post not found with reference key: " + ex.getReferenceKey();
         log.error(message);
         return createErrorResponse(HttpStatus.NOT_FOUND, message);
     }
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
         body.put("message", message);
-        
+
         return new ResponseEntity<>(body, status);
     }
 } 
