@@ -4,6 +4,8 @@ import com.mertcankarsi.simpleblog.dto.PostDto;
 import com.mertcankarsi.simpleblog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +20,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<Page<PostDto>> getAllPosts(Pageable pageable) {
+        return ResponseEntity.ok(postService.getAllPosts(pageable));
     }
 
     @GetMapping("/{referenceKey}")

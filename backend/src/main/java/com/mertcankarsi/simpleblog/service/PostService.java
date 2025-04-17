@@ -6,10 +6,10 @@ import com.mertcankarsi.simpleblog.exception.PostNotFoundException;
 import com.mertcankarsi.simpleblog.mapper.PostMapper;
 import com.mertcankarsi.simpleblog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional(readOnly = true)
-    public List<PostDto> getAllPosts() {
-        return postMapper.toDtoList(postRepository.findAll());
+    public Page<PostDto> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable).map(postMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -53,4 +53,4 @@ public class PostService {
         postRepository.findByReferenceKey(referenceKey)
                 .ifPresent(postRepository::delete);
     }
-} 
+}

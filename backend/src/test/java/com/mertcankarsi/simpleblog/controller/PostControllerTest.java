@@ -8,10 +8,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,16 +46,17 @@ class PostControllerTest {
     @Test
     void getAllPosts_ShouldReturnListOfPosts() {
         // Arrange
-        List<PostDto> expectedPosts = Arrays.asList(postDto);
-        when(postService.getAllPosts()).thenReturn(expectedPosts);
+        List<PostDto> postList = Collections.singletonList(postDto);
+        Page<PostDto> expectedPosts = new PageImpl<>(postList, PageRequest.of(0, 10), postList.size());
+        when(postService.getAllPosts(any(PageRequest.class))).thenReturn(expectedPosts);
 
         // Act
-        ResponseEntity<List<PostDto>> response = postController.getAllPosts();
+        ResponseEntity<Page<PostDto>> response = postController.getAllPosts(PageRequest.of(0, 10));
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedPosts, response.getBody());
-        verify(postService).getAllPosts();
+        verify(postService).getAllPosts(any(PageRequest.class));
     }
 
     @Test

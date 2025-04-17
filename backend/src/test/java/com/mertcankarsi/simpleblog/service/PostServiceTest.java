@@ -11,6 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,18 +63,20 @@ class PostServiceTest {
     @Test
     void getAllPosts_ShouldReturnListOfPosts() {
         // Arrange
-        when(postRepository.findAll()).thenReturn(List.of(post));
-        when(postMapper.toDtoList(any())).thenReturn(List.of(postDto));
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Post> postPage = new PageImpl<>(List.of(post), pageable, 1);
+        when(postRepository.findAll(pageable)).thenReturn(postPage);
+        when(postMapper.toDto(any(Post.class))).thenReturn(postDto);
 
         // Act
-        List<PostDto> result = postService.getAllPosts();
+        Page<PostDto> result = postService.getAllPosts(pageable);
 
         // Assert
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(postDto, result.get(0));
-        verify(postRepository).findAll();
-        verify(postMapper).toDtoList(any());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(postDto, result.getContent().get(0));
+        verify(postRepository).findAll(pageable);
+        verify(postMapper).toDto(any(Post.class));
     }
 
     @Test
@@ -179,4 +185,4 @@ class PostServiceTest {
         verify(postRepository, never()).findByReferenceKey(any());
         verify(postRepository, never()).delete(any());
     }
-} 
+}
