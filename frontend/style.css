@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    background: black;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+  }
+  
+  .terminal {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+    white-space: pre-wrap;
+  }
+  
+  .output {
+    margin-top: 1em;
+  }
+  
+  .prompt {
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+  }
+  
+  .prompt .dollar {
+    margin-right: 5px;
+  }
+  
+  .prompt input {
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    width: 100%;
+  }
