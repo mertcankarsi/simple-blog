@@ -5,18 +5,21 @@ import com.mertcankarsi.simpleblog.entity.Post;
 import com.mertcankarsi.simpleblog.exception.PostNotFoundException;
 import com.mertcankarsi.simpleblog.mapper.PostMapper;
 import com.mertcankarsi.simpleblog.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class PostService {
 
     private final PostMapper postMapper;
     private final PostRepository postRepository;
+
+    public PostService(PostMapper postMapper, PostRepository postRepository) {
+        this.postMapper = postMapper;
+        this.postRepository = postRepository;
+    }
 
     @Transactional(readOnly = true)
     public Page<PostDto> getAllPosts(Pageable pageable) {

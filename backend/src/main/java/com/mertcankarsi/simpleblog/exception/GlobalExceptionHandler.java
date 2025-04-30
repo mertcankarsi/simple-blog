@@ -1,6 +1,6 @@
 package com.mertcankarsi.simpleblog.exception;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,9 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handlePostNotFoundException(PostNotFoundException ex) {
@@ -47,4 +48,4 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(body, status);
     }
-} 
+}
