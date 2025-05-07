@@ -8,13 +8,13 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class SimpleBlogApplicationTest {
 
-    @Test
-    void contextLoads() {
-        // This test is intentionally left blank as it's a placeholder
-    }
+  @Test
+  void contextLoads() {
+    // This test is intentionally left blank as it's a placeholder
+  }
 
-    @Test
-    void applicationStarts() {
-        SimpleBlogApplication.main(new String[]{});
-    }
+  @Test
+  void applicationStarts() {
+    SimpleBlogApplication.main(new String[] {});
+  }
 }
