@@ -1,182 +1,189 @@
 package com.mertcankarsi.simpleblog.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.mertcankarsi.simpleblog.dto.PostDto;
+import com.mertcankarsi.simpleblog.dto.request.PostCreateDto;
 import com.mertcankarsi.simpleblog.entity.Post;
 import com.mertcankarsi.simpleblog.exception.PostNotFoundException;
 import com.mertcankarsi.simpleblog.mapper.PostMapper;
 import com.mertcankarsi.simpleblog.repository.PostRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
 
-    @Mock
-    private PostRepository postRepository;
+  @Mock private PostRepository postRepository;
 
-    @Mock
-    private PostMapper postMapper;
+  @Mock private PostMapper postMapper;
 
-    @InjectMocks
-    private PostService postService;
+  @InjectMocks private PostService postService;
 
-    private Post post;
-    private PostDto postDto;
-    private String referenceKey;
+  private Post post;
+  private PostDto postDto;
+  private PostCreateDto postCreateDto;
+  private String referenceKey;
 
-    @BeforeEach
-    void setUp() {
-        referenceKey = UUID.randomUUID().toString();
+  @BeforeEach
+  void setUp() {
+    referenceKey = UUID.randomUUID().toString();
 
-        post = new Post();
-        post.setReferenceKey(referenceKey);
-        post.setTitle("Test Title");
-        post.setContent("Test Content");
-        post.setCreatedAt(LocalDateTime.now());
-        post.setUpdatedAt(LocalDateTime.now());
+    post = new Post();
+    post.setReferenceKey(referenceKey);
+    post.setTitle("Test Title");
+    post.setContent("Test Content");
+    post.setCreatedAt(LocalDateTime.now());
+    post.setUpdatedAt(LocalDateTime.now());
 
-        postDto = new PostDto();
-        postDto.setReferenceKey(referenceKey);
-        postDto.setTitle("Test Title");
-        postDto.setContent("Test Content");
-        postDto.setCreatedAt(post.getCreatedAt());
-        postDto.setUpdatedAt(post.getUpdatedAt());
-    }
+    postDto = new PostDto();
+    postDto.setReferenceKey(referenceKey);
+    postDto.setTitle("Test Title");
+    postDto.setContent("Test Content");
+    postDto.setCreatedAt(post.getCreatedAt());
+    postDto.setUpdatedAt(post.getUpdatedAt());
 
-    @Test
-    void getAllPosts_ShouldReturnListOfPosts() {
-        // Arrange
-        when(postRepository.findAll()).thenReturn(List.of(post));
-        when(postMapper.toDtoList(any())).thenReturn(List.of(postDto));
+    postCreateDto = new PostCreateDto("Test Title", "Test Content");
+  }
 
-        // Act
-        List<PostDto> result = postService.getAllPosts();
+  @Test
+  void getAllPosts_ShouldReturnListOfPosts() {
+    // Arrange
+    Pageable pageable = PageRequest.of(0, 10);
+    Page<Post> postPage = new PageImpl<>(List.of(post), pageable, 1);
+    when(postRepository.findAll(pageable)).thenReturn(postPage);
+    when(postMapper.toDto(any(Post.class))).thenReturn(postDto);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(postDto, result.get(0));
-        verify(postRepository).findAll();
-        verify(postMapper).toDtoList(any());
-    }
+    // Act
+    Page<PostDto> result = postService.getAllPosts(pageable);
 
-    @Test
-    void getPostByReferenceKey_WhenPostExists_ShouldReturnPost() {
-        // Arrange
-        when(postRepository.findByReferenceKey(any())).thenReturn(Optional.of(post));
-        when(postMapper.toDto(any())).thenReturn(postDto);
+    // Assert
+    assertNotNull(result);
+    assertEquals(1, result.getTotalElements());
+    assertEquals(postDto, result.getContent().get(0));
+    verify(postRepository).findAll(pageable);
+    verify(postMapper).toDto(any(Post.class));
+  }
 
-        // Act
-        PostDto result = postService.getPostByReferenceKey(referenceKey);
+  @Test
+  void getPostByReferenceKey_WhenPostExists_ShouldReturnPost() {
+    // Arrange
+    when(postRepository.findByReferenceKey(any())).thenReturn(Optional.of(post));
+    when(postMapper.toDto(any())).thenReturn(postDto);
 
-        // Assert
-        assertNotNull(result);
-        assertAll(
-                () -> assertEquals(postDto.getReferenceKey(), result.getReferenceKey()),
-                () -> assertEquals(postDto.getTitle(), result.getTitle()),
-                () -> assertEquals(postDto.getContent(), result.getContent()));
-        verify(postRepository).findByReferenceKey(any());
-        verify(postMapper).toDto(any());
-    }
+    // Act
+    PostDto result = postService.getPostByReferenceKey(referenceKey);
 
-    @Test
-    void getPostByReferenceKey_WhenPostDoesNotExist_ShouldThrowException() {
-        // Arrange
-        when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.empty());
+    // Assert
+    assertNotNull(result);
+    assertAll(
+        () -> assertEquals(postDto.getReferenceKey(), result.getReferenceKey()),
+        () -> assertEquals(postDto.getTitle(), result.getTitle()),
+        () -> assertEquals(postDto.getContent(), result.getContent()));
+    verify(postRepository).findByReferenceKey(any());
+    verify(postMapper).toDto(any());
+  }
 
-        // Act & Assert
-        assertThrows(PostNotFoundException.class, () -> postService.getPostByReferenceKey(referenceKey));
-        verify(postRepository).findByReferenceKey(referenceKey);
-        verify(postMapper, never()).toDto(any());
-    }
+  @Test
+  void getPostByReferenceKey_WhenPostDoesNotExist_ShouldThrowException() {
+    // Arrange
+    when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.empty());
 
-    @Test
-    void createPost_ShouldReturnCreatedPost() {
-        // Arrange
-        when(postMapper.toEntity(postDto)).thenReturn(post);
-        when(postRepository.save(post)).thenReturn(post);
-        when(postMapper.toDto(post)).thenReturn(postDto);
+    // Act & Assert
+    assertThrows(
+        PostNotFoundException.class, () -> postService.getPostByReferenceKey(referenceKey));
+    verify(postRepository).findByReferenceKey(referenceKey);
+    verify(postMapper, never()).toDto(any());
+  }
 
-        // Act
-        PostDto result = postService.createPost(postDto);
+  @Test
+  void createPost_ShouldReturnCreatedPost() {
+    // Arrange
+    when(postMapper.toEntity(any(PostCreateDto.class))).thenReturn(post);
+    when(postRepository.save(post)).thenReturn(post);
+    when(postMapper.toDto(post)).thenReturn(postDto);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(postDto, result);
-        verify(postMapper).toEntity(postDto);
-        verify(postRepository).save(post);
-        verify(postMapper).toDto(post);
-    }
+    // Act
+    PostDto result = postService.createPost(postCreateDto);
 
-    @Test
-    void updatePost_WhenPostExists_ShouldReturnUpdatedPost() {
-        // Arrange
-        when(postRepository.findByReferenceKey(any())).thenReturn(Optional.of(post));
-        when(postRepository.save(any())).thenReturn(post);
-        when(postMapper.toDto(any())).thenReturn(postDto);
+    // Assert
+    assertNotNull(result);
+    assertEquals(postDto, result);
+    verify(postMapper).toEntity(any(PostCreateDto.class));
+    verify(postRepository).save(post);
+    verify(postMapper).toDto(post);
+  }
 
-        // Act
-        PostDto result = postService.updatePost(referenceKey, postDto);
+  @Test
+  void updatePost_WhenPostExists_ShouldReturnUpdatedPost() {
+    // Arrange
+    when(postRepository.findByReferenceKey(any())).thenReturn(Optional.of(post));
+    when(postRepository.save(any())).thenReturn(post);
+    when(postMapper.toDto(any())).thenReturn(postDto);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(postDto, result);
-        verify(postRepository).findByReferenceKey(referenceKey);
-        verify(postMapper).updateEntity(any(Post.class), any(PostDto.class));
-        verify(postRepository).save(any());
-        verify(postMapper).toDto(any());
-    }
+    // Act
+    PostDto result = postService.updatePost(referenceKey, postDto);
 
-    @Test
-    void updatePost_WhenPostDoesNotExist_ShouldThrowException() {
-        // Arrange
-        when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.empty());
+    // Assert
+    assertNotNull(result);
+    assertEquals(postDto, result);
+    verify(postRepository).findByReferenceKey(referenceKey);
+    verify(postMapper).updateEntity(any(Post.class), any(PostDto.class));
+    verify(postRepository).save(any());
+    verify(postMapper).toDto(any());
+  }
 
-        // Act & Assert
-        assertThrows(PostNotFoundException.class, () -> postService.updatePost(referenceKey, postDto));
-        verify(postRepository).findByReferenceKey(referenceKey);
-        verify(postMapper, never()).updateEntity(any(), any());
-        verify(postRepository, never()).save(any());
-        verify(postMapper, never()).toDto(any());
-    }
+  @Test
+  void updatePost_WhenPostDoesNotExist_ShouldThrowException() {
+    // Arrange
+    when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.empty());
 
-    @Test
-    void deletePost_WhenPostExists_ShouldDeletePost() {
-        // Arrange
-        when(postRepository.existsByReferenceKey(referenceKey)).thenReturn(true);
-        when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.of(post));
+    // Act & Assert
+    assertThrows(PostNotFoundException.class, () -> postService.updatePost(referenceKey, postDto));
+    verify(postRepository).findByReferenceKey(referenceKey);
+    verify(postMapper, never()).updateEntity(any(), any());
+    verify(postRepository, never()).save(any());
+    verify(postMapper, never()).toDto(any());
+  }
 
-        // Act
-        postService.deletePost(referenceKey);
+  @Test
+  void deletePost_WhenPostExists_ShouldDeletePost() {
+    // Arrange
+    when(postRepository.existsByReferenceKey(referenceKey)).thenReturn(true);
+    when(postRepository.findByReferenceKey(referenceKey)).thenReturn(Optional.of(post));
 
-        // Assert
-        verify(postRepository).existsByReferenceKey(referenceKey);
-        verify(postRepository).findByReferenceKey(referenceKey);
-        verify(postRepository).delete(post);
-    }
+    // Act
+    postService.deletePost(referenceKey);
 
-    @Test
-    void deletePost_WhenPostDoesNotExist_ShouldThrowException() {
-        // Arrange
-        when(postRepository.existsByReferenceKey(referenceKey)).thenReturn(false);
+    // Assert
+    verify(postRepository).existsByReferenceKey(referenceKey);
+    verify(postRepository).findByReferenceKey(referenceKey);
+    verify(postRepository).delete(post);
+  }
 
-        // Act & Assert
-        assertThrows(PostNotFoundException.class, () -> postService.deletePost(referenceKey));
-        verify(postRepository).existsByReferenceKey(referenceKey);
-        verify(postRepository, never()).findByReferenceKey(any());
-        verify(postRepository, never()).delete(any());
-    }
-} 
+  @Test
+  void deletePost_WhenPostDoesNotExist_ShouldThrowException() {
+    // Arrange
+    when(postRepository.existsByReferenceKey(referenceKey)).thenReturn(false);
+
+    // Act & Assert
+    assertThrows(PostNotFoundException.class, () -> postService.deletePost(referenceKey));
+    verify(postRepository).existsByReferenceKey(referenceKey);
+    verify(postRepository, never()).findByReferenceKey(any());
+    verify(postRepository, never()).delete(any());
+  }
+}
