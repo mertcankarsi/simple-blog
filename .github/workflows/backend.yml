@@ -27,7 +27,7 @@ jobs:
         cache: maven
 
     - name: Run Maven verify (with google-java-format check)
-      run: mvn verify
+      run: mvn verify --file backend/pom.xml
       env:
         MAVEN_OPTS: "--add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED"
         
