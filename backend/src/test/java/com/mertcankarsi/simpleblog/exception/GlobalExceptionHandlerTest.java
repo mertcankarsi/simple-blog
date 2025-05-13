@@ -10,7 +10,9 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -29,8 +31,10 @@ class GlobalExceptionHandlerTest {
         globalExceptionHandler.handlePostNotFoundException(exception);
 
     assertNotNull(response);
-    assertEquals(404, response.getStatusCodeValue());
-    assertEquals("Post not found with reference key: ref-key", response.getBody().get("message"));
+    assertEquals(404, response.getStatusCode().value());
+    Map<String, Object> body = response.getBody();
+    assertNotNull(body);
+    assertEquals("Post not found with reference key: ref-key", body.get("message"));
   }
 
   @Test
@@ -39,14 +43,16 @@ class GlobalExceptionHandlerTest {
     FieldError fieldError = new FieldError("postDto", "title", "Title cannot be empty");
     when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
     MethodArgumentNotValidException exception =
-        new MethodArgumentNotValidException(null, bindingResult);
+        new MethodArgumentNotValidException(Mockito.mock(MethodParameter.class), bindingResult);
 
     ResponseEntity<Map<String, Object>> response =
         globalExceptionHandler.handleValidationException(exception);
 
     assertNotNull(response);
-    assertEquals(400, response.getStatusCodeValue());
-    assertEquals("title: Title cannot be empty", response.getBody().get("message"));
+    assertEquals(400, response.getStatusCode().value());
+    Map<String, Object> body = response.getBody();
+    assertNotNull(body);
+    assertEquals("title: Title cannot be empty", body.get("message"));
   }
 
   @Test
@@ -57,7 +63,9 @@ class GlobalExceptionHandlerTest {
         globalExceptionHandler.handleGenericException(exception);
 
     assertNotNull(response);
-    assertEquals(500, response.getStatusCodeValue());
-    assertEquals("An unexpected error occurred", response.getBody().get("message"));
+    assertEquals(500, response.getStatusCode().value());
+    Map<String, Object> body = response.getBody();
+    assertNotNull(body);
+    assertEquals("An unexpected error occurred", body.get("message"));
   }
 }
