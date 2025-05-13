@@ -1,0 +1,17 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Frontend for DOSBlog",
+  "main": "script.js",
+  "scripts": {
+    "start": "live-server"
+  },
+  "dependencies": {
+    "frontend": "file:"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
