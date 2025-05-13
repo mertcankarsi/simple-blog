@@ -4,12 +4,15 @@
   "description": "Frontend for DOSBlog",
   "main": "script.js",
   "scripts": {
-    "start": "vite"
+    "build": "vite build",
+    "start": "vite",
+    "lint": "eslint ."
   },
   "dependencies": {
     "frontend": "file:"
   },
   "devDependencies": {
+    "eslint": "^9.26.0",
     "vite": "^6.3.5"
   },
   "author": "Mertcan Karşı",
