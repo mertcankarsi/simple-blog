@@ -56,18 +56,18 @@ class JwtServiceTest {
 
   private String generateTestToken(String username) {
     return Jwts.builder()
-        .setSubject(username)
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+        .subject(username)
+        .issuedAt(new Date(System.currentTimeMillis()))
+        .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
         .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
         .compact();
   }
 
   private String generateExpiredTestToken(String username) {
     return Jwts.builder()
-        .setSubject(username)
-        .setIssuedAt(new Date(System.currentTimeMillis() - 2000 * 60 * 60))
-        .setExpiration(new Date(System.currentTimeMillis() - 1000 * 60 * 60)) // 1 hour ago
+        .subject(username)
+        .issuedAt(new Date(System.currentTimeMillis() - 2000 * 60 * 60))
+        .expiration(new Date(System.currentTimeMillis() - 1000 * 60 * 60)) // 1 hour ago
         .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
         .compact();
   }

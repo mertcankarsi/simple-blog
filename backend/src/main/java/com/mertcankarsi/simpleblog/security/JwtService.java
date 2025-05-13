@@ -4,9 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -44,17 +46,17 @@ public class JwtService {
 
   private Claims extractAllClaims(String token) {
     try {
-      return Jwts.parserBuilder()
-          .setSigningKey(getSignInKey())
+      return Jwts.parser()
+          .verifyWith(getSignInKey())
           .build()
-          .parseClaimsJws(token)
-          .getBody();
+          .parseSignedClaims(token)
+          .getPayload();
     } catch (ExpiredJwtException e) {
       return e.getClaims();
     }
   }
 
-  private Key getSignInKey() {
+  private SecretKey getSignInKey() {
     return Keys.hmacShaKeyFor(secretKey.getBytes());
   }
 }
