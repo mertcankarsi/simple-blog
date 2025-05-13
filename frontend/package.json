@@ -4,14 +4,14 @@
   "description": "Frontend for DOSBlog",
   "main": "script.js",
   "scripts": {
-    "start": "live-server"
+    "start": "vite"
   },
   "dependencies": {
     "frontend": "file:"
   },
   "devDependencies": {
-    "live-server": "^1.2.1"
+    "vite": "^6.3.5"
   },
-  "author": "",
+  "author": "Mertcan Karşı",
   "license": "ISC"
 }
