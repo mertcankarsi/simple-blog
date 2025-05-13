@@ -13,4 +13,10 @@
 # Node.js / Frontend
 frontend/node_modules/
 frontend/dist/
-frontend/package-lock.json
+frontend/build/
+frontend/.env
+frontend/.next/
+frontend/.cache/
+frontend/yarn-error.log
+frontend/npm-debug.log
+frontend/yarn.lock
