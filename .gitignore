@@ -9,3 +9,7 @@
 
 # Mac OS
 .DS_Store
+
+# Node.js / Frontend
+frontend/node_modules/
+frontend/package-lock.json
