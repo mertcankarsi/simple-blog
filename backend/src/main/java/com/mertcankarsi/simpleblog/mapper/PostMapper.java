@@ -12,12 +12,17 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface PostMapper {
 
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "referenceKey", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   Post toEntity(PostCreateDto dto);
 
   PostDto toDto(Post entity);
 
   List<PostDto> toDtoList(List<Post> entities);
 
+  @Mapping(target = "id", ignore = true)
   @Mapping(target = "referenceKey", ignore = true)
   @Mapping(target = "createdAt", ignore = true)
   @Mapping(target = "updatedAt", ignore = true)
