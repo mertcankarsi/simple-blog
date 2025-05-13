@@ -1,38 +1,27 @@
 body {
-    margin: 0;
-    background: black;
-    color: #00ff00;
-    font-family: 'Courier New', monospace;
-    font-size: 16px;
-  }
-  
-  .terminal {
-    padding: 20px;
-    max-width: 800px;
-    margin: auto;
-    white-space: pre-wrap;
-  }
-  
-  .output {
-    margin-top: 1em;
-  }
-  
-  .prompt {
-    margin-top: 1em;
-    display: flex;
-    align-items: center;
-  }
-  
-  .prompt .dollar {
-    margin-right: 5px;
-  }
-  
-  .prompt input {
-    background: transparent;
-    border: none;
-    color: #00ff00;
-    font-family: inherit;
-    font-size: inherit;
-    outline: none;
-    width: 100%;
-  }
+  background-color: #000;
+  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.terminal {
+  padding: 20px;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  width: 80%;
+  margin: 20px auto;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.output {
+  margin-bottom: 10px;
+}
+
+.prompt {
+  display: flex;
+  align-items: center;
+}
+
+.dollar {
+  margin-right: 5px;
+}
