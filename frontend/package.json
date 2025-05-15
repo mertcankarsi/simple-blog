@@ -1,20 +1,45 @@
 {
-  "name": "frontend",
-  "version": "1.0.0",
+  "name": "dos-blog-frontend",
+  "version": "0.1.0",
+  "private": true,
   "description": "Frontend for DOSBlog",
-  "main": "script.js",
+  "author": "Mertcan Karşı",
+  "contributors": [
+    {
+      "name": "Mertcan Karşı",
+      "email": "mertcankarsi@icloud.com",
+      "url": "https://github.com/mertcankarsi"
+    }
+  ],
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mertcankarsi/dos-blog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mertcankarsi/dos-blog/issues"
+  },
+  "homepage": "https://github.com/mertcankarsi/dos-blog#readme",
+  "keywords": [
+    "blog",
+    "vite",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
+    "dev": "vite",
     "build": "vite build",
-    "start": "vite",
+    "preview": "vite preview",
     "lint": "eslint ."
   },
   "dependencies": {
-    "frontend": "file:"
+    "dos-blog-frontend": "file:"
   },
   "devDependencies": {
     "eslint": "^9.26.0",
+    "eslint-config-google": "^0.14.0",
     "vite": "^6.3.5"
-  },
-  "author": "Mertcan Karşı",
-  "license": "ISC"
+  }
 }

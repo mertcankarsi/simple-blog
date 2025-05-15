@@ -1,9 +1,8 @@
-module.exports = [
+export default [
   {
     files: ["**/*.js"],
+    extends: ["eslint-config-google"],
     rules: {
-      semi: "error",
-      quotes: ["error", "double"]
     }
   }
 ];
