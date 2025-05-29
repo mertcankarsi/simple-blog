@@ -10,19 +10,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.util.ReflectionTestUtils;
 
 class JwtServiceTest {
 
-  private JwtService jwtService;
-  private String secretKey = "thisIsATestSecretKeyThatIsLongEnoughForHS256";
+  private final String secretKey = "thisIsATestSecretKeyThatIsLongEnoughForHS256";
+  private JwtService underTest;
   private UserDetails userDetails;
   private String token;
 
   @BeforeEach
   void setUp() {
-    jwtService = new JwtService();
-    ReflectionTestUtils.setField(jwtService, "secretKey", secretKey);
+    underTest = new JwtService(secretKey);
 
     userDetails = new User("testuser", "password", new ArrayList<>());
     token = generateTestToken(userDetails.getUsername());
@@ -30,27 +28,27 @@ class JwtServiceTest {
 
   @Test
   void extractUsername_ShouldReturnCorrectUsername() {
-    String username = jwtService.extractUsername(token);
+    String username = underTest.extractUsername(token);
     assertEquals("testuser", username);
   }
 
   @Test
   void isTokenValid_ShouldReturnTrueForValidToken() {
-    boolean isValid = jwtService.isTokenValid(token, userDetails);
+    boolean isValid = underTest.isTokenValid(token, userDetails);
     assertTrue(isValid);
   }
 
   @Test
   void isTokenValid_ShouldReturnFalseForInvalidUsername() {
     UserDetails differentUser = new User("otheruser", "password", new ArrayList<>());
-    boolean isValid = jwtService.isTokenValid(token, differentUser);
+    boolean isValid = underTest.isTokenValid(token, differentUser);
     assertFalse(isValid);
   }
 
   @Test
   void isTokenValid_ShouldReturnFalseForExpiredToken() {
     String expiredToken = generateExpiredTestToken(userDetails.getUsername());
-    boolean isValid = jwtService.isTokenValid(expiredToken, userDetails);
+    boolean isValid = underTest.isTokenValid(expiredToken, userDetails);
     assertFalse(isValid);
   }
 

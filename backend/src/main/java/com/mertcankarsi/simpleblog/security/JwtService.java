@@ -13,8 +13,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
-  @Value("${jwt.secret}")
-  private String secretKey;
+
+  private final String secretKey;
+
+  public JwtService(@Value("${jwt.secret}") String secretKey) {
+    this.secretKey = secretKey;
+  }
+
+  public String generateToken(String email) {
+    return Jwts.builder()
+        .subject(email)
+        .issuedAt(new Date())
+        .expiration(new Date(System.currentTimeMillis() + 3600_000)) // 1 saat
+        .signWith(getSignInKey())
+        .compact();
+  }
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
