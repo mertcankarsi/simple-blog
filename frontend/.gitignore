@@ -1,14 +1,6 @@
-# Node.js
+# node_modules
 node_modules/
+
+# Vite build output
 dist/
-build/
-.cache/
-npm-debug.log
-yarn-error.log
-
-# Environment variables
-.env
-.env.local
-
-# Vite
 .vite/
