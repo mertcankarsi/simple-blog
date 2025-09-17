@@ -1,0 +1,18 @@
+# Get all posts
+curl http://localhost:8080/api/posts
+
+# Get a single post
+curl http://localhost:8080/api/posts/1
+
+# Create a new post
+curl -X POST http://localhost:8080/api/posts \
+  -H "Content-Type: application/json" \
+  -d '{"title":"New Post","content":"This is an sample content."}'
+
+# Update a post
+curl -X PUT http://localhost:8080/api/posts/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Updated Title","content":"Updated content."}'
+
+# Delete a post
+curl -X DELETE http://localhost:8080/api/posts/1
