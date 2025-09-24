@@ -1,40 +1,27 @@
 package com.mertcankarsi.simpleblog.entity;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.springframework.data.annotation.Id;
 
-@Entity
-@Table(name = "posts")
-public class Post {
+public class Post implements Serializable {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Id private Long id;
+  @NotEmpty private String referenceKey;
+  @NotEmpty private String title;
+  @NotEmpty private String content;
+  @NotNull private LocalDateTime createdAt;
+  @NotNull private LocalDateTime updatedAt;
 
-  @Column(name = "reference_key", nullable = false, unique = true)
-  private String referenceKey;
-
-  @Column(nullable = false)
-  private String title;
-
-  @Column(columnDefinition = "TEXT")
-  private String content;
-
-  @Column(name = "created_at")
-  private LocalDateTime createdAt;
-
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
-
-  @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();
     updatedAt = LocalDateTime.now();
     referenceKey = UUID.randomUUID().toString();
   }
 
-  @PreUpdate
   protected void onUpdate() {
     updatedAt = LocalDateTime.now();
   }

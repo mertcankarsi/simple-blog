@@ -21,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -64,8 +63,7 @@ class PostServiceTest {
   void getAllPosts_ShouldReturnListOfPosts() {
     // Arrange
     Pageable pageable = PageRequest.of(0, 10);
-    Page<Post> postPage = new PageImpl<>(List.of(post), pageable, 1);
-    when(postRepository.findAll(pageable)).thenReturn(postPage);
+    when(postRepository.findAll()).thenReturn(List.of(post));
     when(postMapper.toDto(any(Post.class))).thenReturn(postDto);
 
     // Act
@@ -74,8 +72,8 @@ class PostServiceTest {
     // Assert
     assertNotNull(result);
     assertEquals(1, result.getTotalElements());
-    assertEquals(postDto, result.getContent().get(0));
-    verify(postRepository).findAll(pageable);
+    assertEquals(postDto, result.getContent().getFirst());
+    verify(postRepository).findAll();
     verify(postMapper).toDto(any(Post.class));
   }
 

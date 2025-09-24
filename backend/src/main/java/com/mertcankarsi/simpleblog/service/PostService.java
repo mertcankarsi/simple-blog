@@ -6,7 +6,9 @@ import com.mertcankarsi.simpleblog.entity.Post;
 import com.mertcankarsi.simpleblog.exception.PostNotFoundException;
 import com.mertcankarsi.simpleblog.mapper.PostMapper;
 import com.mertcankarsi.simpleblog.repository.PostRepository;
+import java.util.List;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,10 @@ public class PostService {
 
   @Transactional(readOnly = true)
   public Page<PostDto> getAllPosts(Pageable pageable) {
-    return postRepository.findAll(pageable).map(postMapper::toDto);
+    List<Post> posts = postRepository.findAll();
+    int count = postRepository.count();
+    List<PostDto> dtos = postMapper.toDtoList(posts);
+    return new PageImpl<>(dtos, pageable, count);
   }
 
   @Transactional(readOnly = true)
@@ -38,7 +43,8 @@ public class PostService {
   @Transactional
   public PostDto createPost(PostCreateDto postCreateDto) {
     Post post = postMapper.toEntity(postCreateDto);
-    return postMapper.toDto(postRepository.save(post));
+    postRepository.save(post);
+    return postMapper.toDto(post);
   }
 
   @Transactional
@@ -49,7 +55,8 @@ public class PostService {
             .orElseThrow(() -> new PostNotFoundException(referenceKey));
 
     postMapper.updateEntity(existingPost, postDto);
-    return postMapper.toDto(postRepository.save(existingPost));
+    postRepository.save(existingPost);
+    return postMapper.toDto(existingPost);
   }
 
   @Transactional
